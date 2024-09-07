@@ -1,5 +1,6 @@
 import arrow_down_icon from './arrowDown.png'
 import arrow_up_icon from './arrowUp.png'
+import arrow_icon from './left_arrow.png'
 import avatar_icon from './avatar.png'
 import camera_icon from './camera.png'
 import download_icon from './download.png'
@@ -15,10 +16,13 @@ import plus_icon from './plus.png'
 import search_icon from './search.png'
 import theme_icon from './theme.png'
 import video_icon from './video.png'
+import cross_icon from './cross.png'
+import send_icon from './send.png'
 
 export const assets = {
     arrow_down_icon,
     arrow_up_icon,
+    arrow_icon,
     avatar_icon,
     camera_icon,
     download_icon,
@@ -33,5 +37,7 @@ export const assets = {
     plus_icon,
     search_icon,
     theme_icon,
-    video_icon
+    video_icon,
+    cross_icon,
+    send_icon
 }

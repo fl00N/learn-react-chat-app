@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import Chat from "./components/chat/chat"
 import List from "./components/list/List"
 import Login from './components/login/Login'
@@ -12,6 +12,8 @@ const App = () => {
 
   const { currentUser, isLoading, fetchUserInfo } = useUserStore()
   const { chatId } = useChatStore()
+  
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
 
   useEffect(() => {
     const unSub = onAuthStateChanged(auth, (user) => {
@@ -23,6 +25,19 @@ const App = () => {
     }
   }, [fetchUserInfo])
 
+  // Следим за изменением ширины окна
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth)
+    }
+
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
   if (isLoading) return <div className="loading">Loading...</div>
 
   return (
@@ -30,8 +45,14 @@ const App = () => {
       {
         currentUser ? (
           <>
-            <List />
-            {chatId && <Chat />}
+            {windowWidth < 885 ? (
+              chatId ? <Chat /> : <List />
+            ) : (
+              <>
+                <List />
+                <Chat />
+              </>
+            )}
           </>
         ) : (
         <Login />

@@ -7,7 +7,7 @@ import { doc, getDoc, onSnapshot, updateDoc } from 'firebase/firestore'
 import { db } from '../../../lib/firebase'
 import { useChatStore } from '../../../lib/chatStore'
 
-const ChatList = () => {
+const ChatList = ({ onChatSelect }) => {
 
   const [chats, setChats] = useState([])
   const [addMode, setAddMode] = useState(false)
@@ -43,7 +43,8 @@ const ChatList = () => {
         console.log(err)
     }
 
-    changeChat(chat.chatId,chat.user)
+    changeChat(chat.chatId, chat.user)
+    onChatSelect(chat)
 }
 
   useEffect(() => {
@@ -100,8 +101,8 @@ const ChatList = () => {
 
           <div className="texts">
             <span>{chat.user.username}</span>
-            <p>{chat.lastMessage}</p>
-          </div>
+            <p>{chat.lastMessage.length > 20 ? chat.lastMessage.slice(0, 30) + '...' : chat.lastMessage}</p>
+            </div>
         </div>
       ))}
 

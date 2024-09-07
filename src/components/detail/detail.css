@@ -1,100 +1,178 @@
 .detail {
     flex: 1;
 
+    .detailClose {
+        display: none;
+      }
+  
     .user {
-        padding: 30px 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-        border-bottom: 1px solid #dddddd35;
-
-        img {
-            width: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      border-bottom: 1px solid #dddddd35;
+  
+      img {
+        width: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        user-select: none;
+      }
     }
-
+  
     .info {
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 30px;
-
-        .option {
-
-            .title {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-
-                img {
-                    width: 30px;
-                    background-color: rgba(17, 25, 40, 0.3);
-                    padding: 10px;
-                    border-radius: 50%;
-                    cursor: pointer;
-                }
-            }
-
-            .photos {
-                display: flex;
-                flex-direction: column;
-                gap: 20px;
-                margin-top: 20px;
-
-                .photoItem {
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-
-                    .photoDetail {
-                        display: flex;
-                        align-items: center;
-                        gap: 20px;
-
-                        img {
-                            width: 40px;
-                            border-radius: 5px;
-                            object-fit: cover;
-                        }
-                        
-                        span {
-                            font-size: 14px;
-                            color: lightgray;
-                            font-weight: 300;
-                        }
-                    }
-
-                    .icon {
-                        width: 30px;
-                        background-color: rgba(17, 25, 40, 0.3);
-                        padding: 10px;
-                        border-radius: 50%;
-                        cursor: pointer
-                    }
-                }
-
-            }
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+  
+      .option {
+        .title {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          cursor: pointer;
+  
+          img {
+            width: 30px;
+            background-color: rgba(17, 25, 40, 0.3);
+            padding: 10px;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            user-select: none;
+          }
+  
+          .rotate {
+            transform: rotate(180deg);
+          }
         }
-
-        button {
+  
+        .dropdown {
+          margin-top: 10px;
+  
+          button {
             padding: 10px 20px;
             background-color: rgba(230, 74, 105, 0.553);
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-
+  
             &:disabled {
-                background-color: rgba(230, 74, 105, 0.362);
-                cursor: not-allowed;
+              background-color: rgba(230, 74, 105, 0.362);
+              cursor: not-allowed;
             }
-
+  
             &:hover:enabled {
-                background-color: rgba(220, 20, 60, 0.796);
+              background-color: rgba(220, 20, 60, 0.796);
             }
+          }
         }
+  
+    .photos {
+        overflow-y: auto;
+        max-height: 190px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-top: 20px;
+        border-radius: 8px;
+
+        .photoItem {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-bottom: 1px solid #dddddd28;
+            padding: 10px;
+  
+            .photoDetail {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              gap: 10px;
+              padding: 10px;
+  
+              img {
+                width: 100%;
+                height: auto;
+                max-width: 400px;
+                border-radius: 8px;
+                object-fit: cover;
+              }
+  
+              span {
+                font-size: 14px;
+                color: #333;
+                font-weight: 500;
+                text-align: center;
+              }
+            }
+  
+            .icon {
+              display: flex;
+              justify-content: center;
+              padding: 10px;
+              background-color: rgba(17, 25, 40, 0.1);
+              border-top: 1px solid #dddddd;
+              cursor: pointer;
+              transition: background-color 0.3s ease;
+  
+              &:hover {
+                background-color: rgba(17, 25, 40, 0.2);
+              }
+            }
+          }
+        }
+      }
     }
-}
+  }
+
+  @media (max-width: 1100px) {
+    .detail {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background-color: rgba(0, 0, 0, 0.6); /* Slightly darker overlay */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000; /* Ensure it appears on top of other content */
+      overflow: auto; /* Allow scrolling if content overflows */
+      transition: opacity 0.3s ease, visibility 0.3s ease; /* Smooth fade in/out */
+    }
+  
+    .detailContent {
+      background-color: #222222;
+      width: 90%;
+      max-width: 600px;
+      border-radius: 15px; /* Rounded corners */
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      padding: 20px;
+      position: relative;
+      max-height: 530px;
+      overflow: hidden;
+    }
+  
+    .detail .user, .detail .info {
+      padding: 30px;
+    }
+  
+    .detailClose {
+      display: block !important;
+      background-color: transparent;
+      border: none;
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      cursor: pointer;
+      z-index: 1100;
+    }
+  
+    .detailClose img {
+      width: 16px;
+      height: 16px;
+    }
+  }

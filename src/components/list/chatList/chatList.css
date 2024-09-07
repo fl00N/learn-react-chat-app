@@ -7,6 +7,7 @@
         align-items: center;
         gap: 20px;
         padding: 20px;
+        user-select: none;
 
         .searchBar {
             flex: 1;
@@ -24,6 +25,7 @@
                 outline: none;
                 color: white;
                 flex: 1;
+                width: 100%;
             }
     
             img {
@@ -52,6 +54,7 @@
             width: 50px;
             border-radius: 50%;
             object-fit: cover;
+            user-select: none;
         }
 
         .texts {
