@@ -42,7 +42,7 @@ const Detail = ({ onClose }) => {
       }
     });
 
-    return () => unsubscribe(); // Clean up the listener
+    return () => unsubscribe();
   }, [chatId]);
 
   useEffect(() => {

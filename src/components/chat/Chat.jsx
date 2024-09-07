@@ -45,7 +45,6 @@ const Chat = () => {
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
-      // При нажатии только Enter отправляем сообщение
       e.preventDefault();
       handleSend();
     }
@@ -214,8 +213,8 @@ const Chat = () => {
             onChange={e => setText(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={isCurrentUserBlocked || isReceiverBlocked}
-            rows={1} // Задаем минимальное количество строк
-            style={{ resize: 'none' }} // Отключаем возможность ручного изменения размера
+            rows={1}
+            style={{ resize: 'none' }}
           />
           <div className='emoji'>
             <img src={assets.emoji_icon} alt="" onClick={() => setOpen(prev => !prev)} />

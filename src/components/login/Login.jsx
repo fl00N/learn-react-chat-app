@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './login.css'
 import { assets } from '../../assets/assets'
 import { toast } from 'react-toastify'
@@ -26,6 +26,9 @@ const Login = () => {
     password: ''
   })
 
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+  const [isLoginPage, setIsLoginPage] = useState(true)
+
   const handleAvatar = e => {
     if (e.target.files[0]) {
       setAvatar({
@@ -49,9 +52,8 @@ const Login = () => {
 
     try {
       await signInWithEmailAndPassword(auth, email, password)
-      
     } catch (err) {
-      console.log(err);
+      console.log(err)
       toast.error(err.message)
     } finally {
       setLoading(false)
@@ -81,11 +83,11 @@ const Login = () => {
         id: res.user.uid,
         blocked: []
       })
-      
+
       await setDoc(doc(db, 'user-chats', res.user.uid), {
         chatss: []
       })
-      
+
       toast.success("Account created! You can login now!")
 
       setRegisterData({
@@ -105,68 +107,152 @@ const Login = () => {
     }
   }
 
+  // Handle window resizing
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth)
+    }
+
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
   return (
     <div className='login'>
-      <div className="item">
-        <h2>Welcome back</h2>
-        <form onSubmit={handleLogin}>
-          <input
-            type="email"
-            placeholder='Email'
-            name='email'
-            value={loginData.email}
-            onChange={e => handleInputChange(e, setLoginData)}
-          />
-          <input
-            type="password"
-            placeholder='Password'
-            name='password'
-            value={loginData.password}
-            onChange={e => handleInputChange(e, setLoginData)}
-          />
-          
-          <button type='submit' disabled={loading}>{loading ? "Loading" : "Sign In"}</button>
-        </form>
-      </div>
-      <div className="separator"></div>
-      <div className="item">
-        <h2>Create an account</h2>
-        <form onSubmit={handleRegister}>
-          <label htmlFor="file">
-            <img src={avatar.url || assets.avatar_icon} alt="" />
-            Upload an image
-          </label>
-          <input
-            type="file"
-            id="file"
-            style={{display: 'none'}}
-            onChange={handleAvatar}
-          />
-          <input
-            type="text"
-            placeholder='Username'
-            name='username'
-            value={registerData.username}
-            onChange={e => handleInputChange(e, setRegisterData)}
-          />
-          <input
-            type="email"
-            placeholder='Email'
-            name='email'
-            value={registerData.email}
-            onChange={e => handleInputChange(e, setRegisterData)}
-          />
-          <input
-            type="password"
-            placeholder='Password'
-            name='password'
-            value={registerData.password}
-            onChange={e => handleInputChange(e, setRegisterData)}
-          />
-          
-          <button type='submit' disabled={loading}>{loading ? "Loading" : "Sign Up"}</button>
-        </form>
-      </div>
+      {windowWidth < 815 ? (
+        <>
+          {isLoginPage ? (
+            <div className="item">
+              <h2>Welcome back</h2>
+              <form onSubmit={handleLogin}>
+                <input
+                  type="email"
+                  placeholder='Email'
+                  name='email'
+                  value={loginData.email}
+                  onChange={e => handleInputChange(e, setLoginData)}
+                />
+                <input
+                  type="password"
+                  placeholder='Password'
+                  name='password'
+                  value={loginData.password}
+                  onChange={e => handleInputChange(e, setLoginData)}
+                />
+
+                <button type='submit' disabled={loading}>{loading ? "Loading" : "Log In"}</button>
+              </form>
+              <p className='togglePage'>Don't have an account? <button onClick={() => setIsLoginPage(false)}>Sign up</button></p>
+            </div>
+          ) : (
+            <div className="item">
+              <h2>Create an account</h2>
+              <form onSubmit={handleRegister}>
+                <label htmlFor="file">
+                  <img src={avatar.url || assets.avatar_icon} alt="" />
+                  Upload an image
+                </label>
+                <input
+                  type="file"
+                  id="file"
+                  style={{ display: 'none' }}
+                  onChange={handleAvatar}
+                />
+                <input
+                  type="text"
+                  placeholder='Username'
+                  name='username'
+                  value={registerData.username}
+                  onChange={e => handleInputChange(e, setRegisterData)}
+                />
+                <input
+                  type="email"
+                  placeholder='Email'
+                  name='email'
+                  value={registerData.email}
+                  onChange={e => handleInputChange(e, setRegisterData)}
+                />
+                <input
+                  type="password"
+                  placeholder='Password'
+                  name='password'
+                  value={registerData.password}
+                  onChange={e => handleInputChange(e, setRegisterData)}
+                />
+
+                <button type='submit' disabled={loading}>{loading ? "Loading" : "Sign Up"}</button>
+              </form>
+              <p className='togglePage'>Already have an account? <button onClick={() => setIsLoginPage(true)}>Log In here</button></p>
+            </div>
+          )}
+        </>
+      ) : (
+        <div className="contentWrapper">
+          <div className="item">
+            <h2>Welcome back</h2>
+            <form onSubmit={handleLogin}>
+              <input
+                type="email"
+                placeholder='Email'
+                name='email'
+                value={loginData.email}
+                onChange={e => handleInputChange(e, setLoginData)}
+              />
+              <input
+                type="password"
+                placeholder='Password'
+                name='password'
+                value={loginData.password}
+                onChange={e => handleInputChange(e, setLoginData)}
+              />
+
+              <button type='submit' disabled={loading}>{loading ? "Loading" : "Sign In"}</button>
+            </form>
+          </div>
+          <div className="separator"></div>
+          <div className="item">
+            <h2>Create an account</h2>
+            <form onSubmit={handleRegister}>
+              <label htmlFor="file">
+                <img src={avatar.url || assets.avatar_icon} alt="" />
+                Upload an image
+              </label>
+              <input
+                type="file"
+                id="file"
+                style={{ display: 'none' }}
+                onChange={handleAvatar}
+              />
+              <input
+                type="text"
+                placeholder='Username'
+                name='username'
+                value={registerData.username}
+                onChange={e => handleInputChange(e, setRegisterData)}
+              />
+              <input
+                type="email"
+                placeholder='Email'
+                name='email'
+                value={registerData.email}
+                onChange={e => handleInputChange(e, setRegisterData)}
+              />
+              <input
+                type="password"
+                placeholder='Password'
+                name='password'
+                value={registerData.password}
+                onChange={e => handleInputChange(e, setRegisterData)}
+              />
+
+              <button type='submit' disabled={loading}>{loading ? "Loading" : "Sign Up"}</button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

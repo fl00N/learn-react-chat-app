@@ -25,7 +25,6 @@ const App = () => {
     }
   }, [fetchUserInfo])
 
-  // Следим за изменением ширины окна
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth)

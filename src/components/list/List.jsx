@@ -13,12 +13,10 @@ const List = () => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  // Function to be called when a chat is selected
   const handleChatSelect = (chat) => {
     setSelectedChat(chat)
   }
 
-  // Determine if the List component should be hidden
   const shouldHideList = isMobile && selectedChat
 
   return !shouldHideList ? (
