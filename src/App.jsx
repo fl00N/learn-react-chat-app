@@ -50,7 +50,7 @@ const App = () => {
             ) : (
               <>
                 <List />
-                <Chat />
+                {chatId && <Chat />}
               </>
             )}
           </>

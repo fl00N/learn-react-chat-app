@@ -3,7 +3,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-
+    position: relative;
+    
     .user {
         display: flex;
         align-items: center;
@@ -39,7 +40,7 @@
     
 .more {
     position: absolute;
-    left: 20.5rem;
+    right: 0.7rem;
     top: 4rem;
     padding: 10px;
     background-color: rgba(17, 25, 40, 0.781);
