@@ -1,15 +1,22 @@
-import { useEffect, useRef } from 'react';
-import './detail.css';
-import { assets } from '../../assets/assets';
-import { useUserStore } from '../../lib/userStore';
-import { useChatStore } from '../../lib/chatStore';
-import { arrayRemove, arrayUnion, doc, onSnapshot, updateDoc } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
-import { useState } from 'react';
+import { useEffect, useRef } from "react";
+import "./detail.css";
+import { assets } from "../../assets/assets";
+import { useUserStore } from "../../lib/userStore";
+import { useChatStore } from "../../lib/chatStore";
+import {
+  arrayRemove,
+  arrayUnion,
+  doc,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
+import { db } from "../../lib/firebase";
+import { useState } from "react";
 
 const Detail = ({ onClose }) => {
   const { chatId } = useChatStore();
-  const { user, changeBlock, isReceiverBlocked, isCurrentUserBlocked } = useChatStore();
+  const { user, changeBlock, isReceiverBlocked, isCurrentUserBlocked } =
+    useChatStore();
   const { currentUser } = useUserStore();
 
   const [isChatSettingsOpen, setIsChatSettingsOpen] = useState(false);
@@ -34,7 +41,7 @@ const Detail = ({ onClose }) => {
   };
 
   useEffect(() => {
-    const chatDocRef = doc(db, 'chats', chatId);
+    const chatDocRef = doc(db, "chats", chatId);
     const unsubscribe = onSnapshot(chatDocRef, (snapshot) => {
       const chatData = snapshot.data();
       if (chatData?.sharedImages) {
@@ -52,16 +59,16 @@ const Detail = ({ onClose }) => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [onClose]);
 
   return (
-    <div className='detail'>
-      <div className='detailContent' ref={modalRef}>
-        <button className='detailClose' onClick={onClose}>
+    <div className="detail">
+      <div className="detailContent" ref={modalRef}>
+        <button className="detailClose" onClick={onClose}>
           <img src={assets.cross_icon} alt="Close" />
         </button>
         <div className="user">
@@ -69,39 +76,50 @@ const Detail = ({ onClose }) => {
           <h2>{user?.username}</h2>
         </div>
 
-        <div className='info'>
-          <div className='option'>
-            <div className='title' onClick={() => setIsChatSettingsOpen(!isChatSettingsOpen)}>
+        <div className="info">
+          <div className="option">
+            <div
+              className="title"
+              onClick={() => setIsChatSettingsOpen(!isChatSettingsOpen)}
+            >
               <span>Chat Settings</span>
-              <img src={assets.arrow_up_icon} alt="" className={isChatSettingsOpen ? 'rotate' : ''} />
+              <img
+                src={assets.arrow_up_icon}
+                alt=""
+                className={isChatSettingsOpen ? "rotate" : ""}
+              />
             </div>
             {isChatSettingsOpen && (
               <div className="dropdown">
-                <button
-                  onClick={handleBlock}
-                  disabled={isCurrentUserBlocked}
-                >
+                <button onClick={handleBlock} disabled={isCurrentUserBlocked}>
                   {isCurrentUserBlocked
                     ? "You are Blocked!"
                     : isReceiverBlocked
-                      ? "User Blocked"
-                      : "Block User"}
+                    ? "User Blocked"
+                    : "Block User"}
                 </button>
               </div>
             )}
           </div>
 
-          <div className='option'>
-            <div className='title' onClick={() => setIsSharedPhotosOpen(!isSharedPhotosOpen)}>
+          <div className="option">
+            <div
+              className="title"
+              onClick={() => setIsSharedPhotosOpen(!isSharedPhotosOpen)}
+            >
               <span>Shared Photos</span>
-              <img src={assets.arrow_up_icon} alt="" className={isSharedPhotosOpen ? 'rotate' : ''} />
+              <img
+                src={assets.arrow_up_icon}
+                alt=""
+                className={isSharedPhotosOpen ? "rotate" : ""}
+              />
             </div>
             {isSharedPhotosOpen && (
               <div className="photos">
                 {sharedPhotos.length > 0 ? (
                   sharedPhotos.map((photo, index) => (
                     <div className="photoItem" key={index}>
-                      <div className='photoDetail'>
+                      <div className="photoDetail">
                         <img src={photo.imgUrl} alt={`Shared photo ${index}`} />
                       </div>
                     </div>

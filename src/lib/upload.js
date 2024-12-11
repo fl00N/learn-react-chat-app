@@ -10,20 +10,29 @@ const upload = async (file) => {
     return new Promise((resolve, reject) => {
 
     
-    uploadTask.on('state_changed', 
-        (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log('Upload is ' + progress + '% done');
-        }, 
+        uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              console.log("Upload is " + progress + "% done");
+            },
             (error) => {
-                reject("Something went wrong" + error.code)
-            }, 
+              console.error("Error during upload:", error);
+              reject("Something went wrong: " + error.code);
+            },
             () => {
-                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                    resolve(downloadURL)
+              getDownloadURL(uploadTask.snapshot.ref)
+                .then((downloadURL) => {
+                  console.log("File available at", downloadURL);
+                  resolve(downloadURL);
+                })
+                .catch((urlError) => {
+                  console.error("Error getting download URL:", urlError);
+                  reject(urlError);
                 });
             }
-        )
+          );
+          
     })
 }
         

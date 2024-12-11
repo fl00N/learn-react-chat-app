@@ -1,21 +1,27 @@
-import { useState, useEffect, useRef } from 'react';
-import './chat.css';
-import { assets } from '../../assets/assets';
-import EmojiPicker from 'emoji-picker-react';
-import Detail from '../detail/Detail';
-import { arrayUnion, doc, getDoc, onSnapshot, updateDoc } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
-import { useChatStore } from '../../lib/chatStore';
-import { useUserStore } from '../../lib/userStore';
-import upload from '../../lib/upload';
+import { useState, useEffect, useRef } from "react";
+import "./chat.css";
+import { assets } from "../../assets/assets";
+import EmojiPicker from "emoji-picker-react";
+import Detail from "../detail/Detail";
+import {
+  arrayUnion,
+  doc,
+  getDoc,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
+import { db } from "../../lib/firebase";
+import { useChatStore } from "../../lib/chatStore";
+import { useUserStore } from "../../lib/userStore";
+import upload from "../../lib/upload";
 
 const Chat = () => {
-  const { chatId, user, isReceiverBlocked, isCurrentUserBlocked, setChatId } = useChatStore();
+  const { chatId, user, isReceiverBlocked, isCurrentUserBlocked, setChatId } =
+    useChatStore();
   const { currentUser } = useUserStore();
-
   const [open, setOpen] = useState(false);
   const [chat, setChat] = useState();
-  const [text, setText] = useState('');
+  const [text, setText] = useState("");
   const [showDetail, setShowDetail] = useState(false);
   const [img, setImg] = useState({
     file: null,
@@ -34,7 +40,7 @@ const Chat = () => {
     if (e.target.files[0]) {
       setImg({
         file: e.target.files[0],
-        url: URL.createObjectURL(e.target.files[0])
+        url: URL.createObjectURL(e.target.files[0]),
       });
     }
   };
@@ -44,11 +50,11 @@ const Chat = () => {
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
-  };  
+  };
 
   const handleDeselect = () => {
     setChatId(null);
@@ -61,43 +67,38 @@ const Chat = () => {
         requestAnimationFrame(() => {
           scrollElement.scrollTo({
             top: scrollElement.scrollHeight,
-            behavior: 'smooth'
+            behavior: "smooth",
           });
         });
       }
     }
   }, [chat, chat?.messages]);
-  
 
   useEffect(() => {
     if (!chatId) return;
-  
-    const unSub = onSnapshot(
-      doc(db, 'chats', chatId),
-      (res) => {
-        setChat(res.data());
-      }
-    );
-  
+
+    const unSub = onSnapshot(doc(db, "chats", chatId), (res) => {
+      setChat(res.data());
+    });
+
     return () => {
       unSub();
     };
   }, [chatId]);
-  
 
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 1100);
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
   const handleSend = async () => {
-    if (text === '' && !img.file) return;
+    if (text === "" && !img.file) return;
 
     let imgUrl = null;
 
@@ -106,7 +107,7 @@ const Chat = () => {
         imgUrl = await upload(img.file);
       }
 
-      await updateDoc(doc(db, 'chats', chatId), {
+      await updateDoc(doc(db, "chats", chatId), {
         messages: arrayUnion({
           senderId: currentUser.id,
           text,
@@ -124,15 +125,18 @@ const Chat = () => {
 
       const userIDs = [currentUser.id, user.id];
       userIDs.forEach(async (id) => {
-        const userChatsRef = doc(db, 'user-chats', id);
+        const userChatsRef = doc(db, "user-chats", id);
         const userChatsSnapshot = await getDoc(userChatsRef);
 
         if (userChatsSnapshot.exists()) {
           const userChatsData = userChatsSnapshot.data();
-          const chatIndex = userChatsData.chats.findIndex((c) => c.chatId === chatId);
+          const chatIndex = userChatsData.chats.findIndex(
+            (c) => c.chatId === chatId
+          );
 
-          userChatsData.chats[chatIndex].lastMessage = text || 'Image';
-          userChatsData.chats[chatIndex].isSeen = id === currentUser.id ? true : false;
+          userChatsData.chats[chatIndex].lastMessage = text || "Image";
+          userChatsData.chats[chatIndex].isSeen =
+            id === currentUser.id ? true : false;
           userChatsData.chats[chatIndex].updatedAt = Date.now();
 
           await updateDoc(userChatsRef, {
@@ -146,39 +150,40 @@ const Chat = () => {
 
     setImg({
       file: null,
-      url: '',
+      url: "",
     });
-    setText('');
+    setText("");
   };
 
   return (
-    <div className='chatAndDetail'>
-      <div className='chat'>
-        <div className='top'>
-          <div className='user'>
-            <img 
-              className='deselectArrow'
-              src={assets.arrow_icon} 
+    <div className="chatAndDetail">
+      <div className="chat">
+        <div className="top">
+          <div className="user">
+            <img
+              className="deselectArrow"
+              src={assets.arrow_icon}
               alt="Deselect"
               onClick={handleDeselect}
             />
 
             <img src={user?.avatar || assets.avatar_icon} alt="" />
-            <div className='texts'>
+            <div className="texts">
               <span>{user?.username}</span>
             </div>
           </div>
 
-          <div className='icons'>
+          <div className="icons">
             <img onClick={toggleDetail} src={assets.more_icon} alt="" />
           </div>
         </div>
 
-        <div className='center'>
-          
+        <div className="center">
           {chat?.messages?.map((message) => (
             <div
-              className={message.senderId === currentUser?.id ? 'message own' : 'message'}
+              className={
+                message.senderId === currentUser?.id ? "message own" : "message"
+              }
               key={`${message.senderId}-${message.createdAt}`}
             >
               <div className="texts">
@@ -196,43 +201,59 @@ const Chat = () => {
             </div>
           )}
 
-        <div ref={endRef}></div>
+          <div ref={endRef}></div>
         </div>
 
-
-        <div className='bottom'>
-          <div className='icons'>
+        <div className="bottom">
+          <div className="icons">
             <label htmlFor="file">
               <img src={assets.img_icon} alt="" />
             </label>
-            <input type="file" id="file" style={{ display: "none" }} onChange={handleImg} />
+            <input
+              type="file"
+              id="file"
+              style={{ display: "none" }}
+              onChange={handleImg}
+            />
           </div>
           <textarea
-            placeholder={(isCurrentUserBlocked || isReceiverBlocked) ? "You cannot send a message" : "Type a message..."}
+            placeholder={
+              isCurrentUserBlocked || isReceiverBlocked
+                ? "You cannot send a message"
+                : "Type a message..."
+            }
             value={text}
-            onChange={e => setText(e.target.value)}
+            onChange={(e) => setText(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={isCurrentUserBlocked || isReceiverBlocked}
             rows={1}
-            style={{ resize: 'none' }}
+            style={{ resize: "none" }}
           />
-          <div className='emoji'>
-            <img src={assets.emoji_icon} alt="" onClick={() => setOpen(prev => !prev)} />
+          <div className="emoji">
+            <img
+              src={assets.emoji_icon}
+              alt=""
+              onClick={() => setOpen((prev) => !prev)}
+            />
             <div className="picker">
-              <EmojiPicker emojiStyle='apple' open={open} onEmojiClick={handleEmoji} />
+              <EmojiPicker
+                emojiStyle="apple"
+                open={open}
+                onEmojiClick={handleEmoji}
+              />
             </div>
           </div>
           <button
-            className='sendBtn'
+            className="sendBtn"
             onClick={handleSend}
             disabled={isCurrentUserBlocked || isReceiverBlocked}
-          ><img src={assets.send_icon} alt="" /></button>
+          >
+            <img src={assets.send_icon} alt="" />
+          </button>
         </div>
       </div>
 
-      {showDetail && (
-        <Detail onClose={() => setShowDetail(false)} />
-      )}
+      {showDetail && <Detail onClose={() => setShowDetail(false)} />}
     </div>
   );
 };

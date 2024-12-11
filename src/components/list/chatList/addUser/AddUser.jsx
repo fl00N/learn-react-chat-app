@@ -1,92 +1,99 @@
-import { useState } from 'react';
-import { assets } from '../../../../assets/assets'
-import './addUser.css'
-import { db } from '../../../../lib/firebase'
-import { arrayUnion, collection, doc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from "firebase/firestore";
-import { useUserStore } from '../../../../lib/userStore'
+import { useState } from "react";
+import { assets } from "../../../../assets/assets";
+import "./addUser.css";
+import { db } from "../../../../lib/firebase";
+import {
+  arrayUnion,
+  collection,
+  doc,
+  getDocs,
+  query,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { useUserStore } from "../../../../lib/userStore";
 
 const AddUser = () => {
+  const [user, setUser] = useState(null);
 
-  const [user, setUser] = useState(null)
-
-  const { currentUser } = useUserStore()
+  const { currentUser } = useUserStore();
 
   const handleSearch = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    const formData = new FormData(e.target)
-    const username = formData.get('username')
+    const formData = new FormData(e.target);
+    const username = formData.get("username");
 
     try {
       const userRef = collection(db, "users");
 
       const q = query(userRef, where("username", "==", username));
 
-      const querySnapshot = await getDocs(q)
+      const querySnapshot = await getDocs(q);
 
-      if(!querySnapshot.empty) {
-        setUser(querySnapshot.docs[0].data())
+      if (!querySnapshot.empty) {
+        setUser(querySnapshot.docs[0].data());
       }
-
     } catch (err) {
-        console.log(err);
+      console.log(err);
     }
-  }
+  };
 
   const handleAdd = async () => {
-    const chatRef = collection(db, 'chats')
-    const userChatsRef = collection(db, 'user-chats')
+    const chatRef = collection(db, "chats");
+    const userChatsRef = collection(db, "user-chats");
 
     try {
-      const newChatRef = doc(chatRef)
+      const newChatRef = doc(chatRef);
 
       await setDoc(newChatRef, {
         createdAt: serverTimestamp(),
-        messages: []
-      })
+        messages: [],
+      });
 
       await updateDoc(doc(userChatsRef, user.id), {
         chats: arrayUnion({
           chatId: newChatRef.id,
-          lastMessage: '',
+          lastMessage: "",
           receiverId: currentUser.id,
-          updatedAt: Date.now()
-        })
-      })
+          updatedAt: Date.now(),
+        }),
+      });
 
       await updateDoc(doc(userChatsRef, currentUser.id), {
         chats: arrayUnion({
           chatId: newChatRef.id,
-          lastMessage: '',
+          lastMessage: "",
           receiverId: user.id,
-          updatedAt: Date.now()
-        })
-      })
-      
+          updatedAt: Date.now(),
+        }),
+      });
     } catch (err) {
       console.log(err);
-      
     }
-  }
+  };
 
   return (
-    <div className='addUser'>
-        <form onSubmit={handleSearch}>
-            <input type="text" placeholder='Username' name='username'/>
-            <button>Search</button>
-        </form>
+    <div className="addUser">
+      <form onSubmit={handleSearch}>
+        <input type="text" placeholder="Username" name="username" />
+        <button>Search</button>
+      </form>
 
-        {user && <div className='user'>
-                    <div className="detail">
-                        <img src={user.avatar || assets.avatar_icon} alt="" />
-                        <span>{user.username}</span>
-                    </div>
+      {user && (
+        <div className="user">
+          <div className="userDetails">
+            <img src={user.avatar || assets.avatar_icon} alt="" />
+            <span>{user.username}</span>
+          </div>
 
-                    <button onClick={handleAdd}>Add User</button>
-                </div>
-        }
+          <button onClick={handleAdd}>Add User</button>
+        </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default AddUser
+export default AddUser;

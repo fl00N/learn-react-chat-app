@@ -39,7 +39,7 @@
         align-items: center;
         justify-content: space-between;
 
-        .detail {
+        .userDetails {
             display: flex;
             align-items: center;
             gap: 20px;
